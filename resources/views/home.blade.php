@@ -382,6 +382,67 @@
         });
     </script>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookieBanner" class="cookie-banner">
+        <div class="cookie-banner__content">
+            <p class="cookie-banner__text">
+                {{ app()->getLocale() === 'fr'
+                    ? 'Nous utilisons des cookies pour analyser notre trafic et améliorer votre expérience. En acceptant, vous consentez à l\'utilisation de cookies analytiques.'
+                    : 'We use cookies to analyze our traffic and improve your experience. By accepting, you consent to the use of analytics cookies.' }}
+            </p>
+            <div class="cookie-banner__buttons">
+                <button id="cookieAccept" class="cookie-banner__btn cookie-banner__btn--accept">
+                    {{ app()->getLocale() === 'fr' ? 'Accepter' : 'Accept' }}
+                </button>
+                <button id="cookieRefuse" class="cookie-banner__btn cookie-banner__btn--refuse">
+                    {{ app()->getLocale() === 'fr' ? 'Refuser' : 'Refuse' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const banner = document.getElementById('cookieBanner');
+            const acceptBtn = document.getElementById('cookieAccept');
+            const refuseBtn = document.getElementById('cookieRefuse');
+
+            // Check if consent was already given
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const expires = `expires=${date.toUTCString()}`;
+                document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+            }
+
+            // Show banner if no consent cookie exists
+            if (!getCookie('cookies_consent')) {
+                banner.style.display = 'flex';
+            }
+
+            // Accept cookies
+            acceptBtn.addEventListener('click', function() {
+                setCookie('cookies_accepted', 'true', 365);
+                setCookie('cookies_consent', 'true', 365);
+                banner.style.display = 'none';
+            });
+
+            // Refuse cookies
+            refuseBtn.addEventListener('click', function() {
+                setCookie('cookies_accepted', 'false', 365);
+                setCookie('cookies_consent', 'true', 365);
+                banner.style.display = 'none';
+            });
+        })();
+    </script>
+
 </body>
 
 </html>
